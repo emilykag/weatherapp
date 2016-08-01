@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="windspeed">Windspeed</string>
+    <string name="humidity">Humidity</string>
+    <string name="visibility">Visibility</string>
+    <string name="sunset">Sunset</string>
+    <string name="sunrise">Sunrise</string>
+
+    <string name="main_forecast">Now</string>
+    <string name="weakly_forecast">Weakly</string>
+
+    <string name="no_internet_message">No Internet Connection</string>
+
+    <string name="pref_location_label">Location</string>
+    <string name="pref_location_key">location</string>
+    <string name="pref_location_default">Thessaloniki</string>
+    <string name="location_not_found">Location not found</string>
+
+</resources>
