@@ -26,6 +26,13 @@
         <activity
             android:name=".activities.SettingsActivity"
             android:screenOrientation="portrait" />
+
+        <provider
+            android:name=".utils.databaseutils.WeatherProvider"
+            android:authorities="com.androidessence.moviedatabase"
+            android:exported="false"
+            android:protectionLevel="signature"
+            android:syncable="true"/>
     </application>
 
 </manifest>

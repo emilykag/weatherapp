@@ -47,46 +47,92 @@ public class ForecastFragment extends Fragment {
     }
 
     public void setWeatherImage(String code) {
-        if (code.equals("0") || code.equals("2")) {
-            setImageResource("tornado");
-        } else if (code.equals("1") || code.equals("3") || code.equals("4") || code.equals("37") || code.equals("38")
-                || code.equals("39") || code.equals("45") || code.equals("47")) {
-            setImageResource("thunderstorms");
-        } else if (code.equals("5") || code.equals("6") || code.equals("7") || code.equals("18")) {
-            setImageResource("rainandsnowmixed");
-        } else if (code.equals("8") || code.equals("9") || code.equals("10") || code.equals("17") || code.equals("35")) {
-            setImageResource("rain");
-        } else if (code.equals("11") || code.equals("12") || code.equals("40")) {
-            setImageResource("shower");
-        } else if (code.equals("13") || code.equals("14")) {
-            setImageResource("flurries");
-        } else if (code.equals("15") || code.equals("16") || code.equals("41") || code.equals("42") || code.equals("43")
-                || code.equals("46")) {
-            setImageResource("snow");
-        } else if (code.equals("19") || code.equals("20") || code.equals("21") || code.equals("22")) {
-            setImageResource("fog");
-        } else if (code.equals("23") || code.equals("24")) {
-            setImageResource("windy");
-        } else if (code.equals("25")) {
-            setImageResource("cold");
-        } else if (code.equals("26") || code.equals("44")) {
-            setImageResource("mostlycloudy");
-        } else if (code.equals("27") || code.equals("29")) {
-            setImageResource("mostlyclear");
-        } else if (code.equals("28") || code.equals("30")) {
-            setImageResource("partlysunny");
-        } else if (code.equals("31") || code.equals("33")) {
-            setImageResource("clear");
-        } else if (code.equals("32") || code.equals("34")) {
-            setImageResource("sunny");
-        } else if (code.equals("36")) {
-            setImageResource("hot");
+        switch (code) {
+            case "0":
+            case "2":
+                setImageResource("tornado");
+                break;
+            case "1":
+            case "3":
+            case "4":
+            case "37":
+            case "38":
+            case "39":
+            case "45":
+            case "47":
+                setImageResource("thunderstorms");
+                break;
+            case "5":
+            case "6":
+            case "7":
+            case "18":
+                setImageResource("rainandsnowmixed");
+                break;
+            case "8":
+            case "9":
+            case "10":
+            case "17":
+            case "35":
+                setImageResource("rain");
+                break;
+            case "11":
+            case "12":
+            case "40":
+                setImageResource("shower");
+                break;
+            case "13":
+            case "14":
+                setImageResource("flurries");
+                break;
+            case "15":
+            case "16":
+            case "41":
+            case "42":
+            case "43":
+            case "46":
+                setImageResource("snow");
+                break;
+            case "19":
+            case "20":
+            case "21":
+            case "22":
+                setImageResource("fog");
+                break;
+            case "23":
+            case "24":
+                setImageResource("windy");
+                break;
+            case "25":
+                setImageResource("cold");
+                break;
+            case "26":
+            case "44":
+                setImageResource("mostlycloudy");
+                break;
+            case "27":
+            case "29":
+                setImageResource("mostlyclear");
+                break;
+            case "28":
+            case "30":
+                setImageResource("partlysunny");
+                break;
+            case "31":
+            case "33":
+                setImageResource("clear");
+                break;
+            case "32":
+            case "34":
+                setImageResource("sunny");
+                break;
+            case "36":
+                setImageResource("hot");
+                break;
         }
     }
 
     private void setImageResource(String imgName) {
         int bgID = getResources().getIdentifier("drawable/bg_" + imgName, null, getContext().getPackageName());
-        Drawable weatherBackground = getResources().getDrawable(bgID);
-        layoutFragmentForecast.setBackground(weatherBackground);
+        layoutFragmentForecast.setBackgroundResource(bgID);
     }
 }
