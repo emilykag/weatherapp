@@ -35,7 +35,7 @@ public class ForecastAsyncTask extends AsyncTask<String, Void, Response> {
     protected void onPostExecute(Response forecastJsonStr) {
         if (forecastJsonStr.getCode() == 200) {
             WeatherValues weatherValues = JSONParser.jsonParser(forecastJsonStr.getResponse());
-            callback.setViews(weatherValues);
+            callback.setViews(weatherValues, false);
         } else {
             callback.showFailure(forecastJsonStr.getCode());
         }

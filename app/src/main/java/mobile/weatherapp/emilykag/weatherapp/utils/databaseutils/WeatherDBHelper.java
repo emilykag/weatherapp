@@ -4,13 +4,13 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class WeatherDBHelper extends SQLiteOpenHelper {
+class WeatherDBHelper extends SQLiteOpenHelper {
 
     private SQLiteDatabase sqlDB;
     private static final String DATABASE_NAME = "weather.db";
     private static final int DATABASE_VERSION = 1;
 
-    public WeatherDBHelper(Context context) {
+    WeatherDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

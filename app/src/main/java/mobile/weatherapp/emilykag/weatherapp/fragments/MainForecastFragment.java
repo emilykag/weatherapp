@@ -2,13 +2,16 @@ package mobile.weatherapp.emilykag.weatherapp.fragments;
 
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -26,11 +29,14 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import mobile.weatherapp.emilykag.weatherapp.R;
 import mobile.weatherapp.emilykag.weatherapp.interfaces.Callback;
 import mobile.weatherapp.emilykag.weatherapp.models.WeatherValues;
 import mobile.weatherapp.emilykag.weatherapp.utils.ForecastAsyncTask;
+import mobile.weatherapp.emilykag.weatherapp.utils.databaseutils.DatabaseActions;
 import mobile.weatherapp.emilykag.weatherapp.utils.databaseutils.WeatherContract;
 
 public class MainForecastFragment extends Fragment implements Callback {
@@ -50,7 +56,7 @@ public class MainForecastFragment extends Fragment implements Callback {
     private LinearLayout linearLayoutMainWeather;
     private TextView textViewLocationNotFound;
 
-    private ContentResolver contentResolver;
+    private DatabaseActions databaseActions;
 
     public MainForecastFragment() {
     }
@@ -74,26 +80,30 @@ public class MainForecastFragment extends Fragment implements Callback {
         linearLayoutMainWeather = (LinearLayout) view.findViewById(R.id.linearLayoutMainWeather);
         textViewLocationNotFound = (TextView) view.findViewById(R.id.textViewLocationNotFound);
 
-        contentResolver = getContext().getContentResolver();
-
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if (isNetworkAvailable()) {
-            updateWeather();
+        databaseActions = new DatabaseActions(getContext());
+        WeatherValues weatherValues = databaseActions.retrieveWeatherValues();
+        if (weatherValues == null) {
+            if (isNetworkAvailable()) {
+                updateWeather();
+            } else {
+                new AlertDialog.Builder(getContext())
+                        .setMessage(getString(R.string.no_internet_message))
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                getActivity().finish();
+                            }
+                        })
+                        .show();
+            }
         } else {
-            new AlertDialog.Builder(getContext())
-                    .setMessage(getString(R.string.no_internet_message))
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            getActivity().finish();
-                        }
-                    })
-                    .show();
+            setViews(weatherValues, true);
         }
     }
 
@@ -105,34 +115,43 @@ public class MainForecastFragment extends Fragment implements Callback {
     }
 
     @Override
-    public void setViews(WeatherValues weatherValues) {
-        if (weatherValues != null) {
-            textViewLocationNotFound.setVisibility(View.GONE);
-            linearLayoutMainWeather.setVisibility(View.VISIBLE);
-            textViewLocation.setText(weatherValues.getCity());
-            textViewDate.setText(getDate());
-            textViewTemp.setText(weatherValues.getTemperature() + " " + (char) 0x00B0 + "C");
-            textViewDesc.setText(weatherValues.getNowDescription());
-            textViewWindspeed.setText(weatherValues.getWindSpeed() + " km/h");
-            textViewHumidity.setText(weatherValues.getHumidity() + " %");
-            textViewVisibility.setText(weatherValues.getVisibility() + " km");
-            textViewSunrise.setText(weatherValues.getSunrise());
-            textViewSunset.setText(weatherValues.getSunset());
-            textViewToday.setText(weatherValues.getListForecast().get(0).getLow() + (char) 0x00B0 + "C / " +
-                    weatherValues.getListForecast().get(0).getHigh() + (char) 0x00B0 + "C");
-            setWeatherImage(weatherValues.getCode());
-            ForecastFragment.getInstance().setWeatherImage(weatherValues.getCode());
-            WeeklyForecastFragment.getInstance().setWeeklyForecastList(weatherValues.getListForecast());
+    public void setViews(WeatherValues weatherValues, boolean isSaved) {
+        if (isSaved) {
+            setWeatherToViews(weatherValues);
         } else {
-            linearLayoutMainWeather.setVisibility(View.GONE);
-            textViewLocationNotFound.setVisibility(View.VISIBLE);
-            textViewLocationNotFound.setText(R.string.location_not_found);
+            if (weatherValues != null) {
+                setWeatherToViews(weatherValues);
+                databaseActions.addWeatherValues(weatherValues);
+            } else {
+                linearLayoutMainWeather.setVisibility(View.GONE);
+                textViewLocationNotFound.setVisibility(View.VISIBLE);
+                textViewLocationNotFound.setText(R.string.location_not_found);
+            }
         }
     }
 
     @Override
     public void showFailure(int statusCode) {
         Toast.makeText(getContext(), "Error " + String.valueOf(statusCode), Toast.LENGTH_LONG).show();
+    }
+
+    private void setWeatherToViews(WeatherValues weatherValues) {
+        textViewLocationNotFound.setVisibility(View.GONE);
+        linearLayoutMainWeather.setVisibility(View.VISIBLE);
+        textViewLocation.setText(weatherValues.getCity());
+        textViewDate.setText(getDate());
+        textViewTemp.setText(weatherValues.getTemperature() + " " + (char) 0x00B0 + "C");
+        textViewDesc.setText(weatherValues.getNowDescription());
+        textViewWindspeed.setText(weatherValues.getWindSpeed() + " km/h");
+        textViewHumidity.setText(weatherValues.getHumidity() + " %");
+        textViewVisibility.setText(weatherValues.getVisibility() + " km");
+        textViewSunrise.setText(weatherValues.getSunrise());
+        textViewSunset.setText(weatherValues.getSunset());
+//        textViewToday.setText(weatherValues.getListForecast().get(0).getLow() + (char) 0x00B0 + "C / " +
+//                weatherValues.getListForecast().get(0).getHigh() + (char) 0x00B0 + "C");
+        setWeatherImage(weatherValues.getCode());
+        ForecastFragment.getInstance().setWeatherImage(weatherValues.getCode());
+        WeeklyForecastFragment.getInstance().setWeeklyForecastList(weatherValues.getListForecast());
     }
 
     private String getDate() {
@@ -235,18 +254,5 @@ public class MainForecastFragment extends Fragment implements Callback {
         NetworkInfo info = (NetworkInfo) ((ConnectivityManager)
                 getContext().getSystemService(getContext().CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
         return info != null;
-    }
-
-    private void addWeatherValues(WeatherValues weatherValues) {
-        ContentValues values = new ContentValues();
-        values.put(WeatherContract.WeatherEntry.WV_CITY, weatherValues.getCity());
-        values.put(WeatherContract.WeatherEntry.WV_WINDSPEED, weatherValues.getCity());
-        values.put(WeatherContract.WeatherEntry.WV_HUMIDITY, weatherValues.getCity());
-        values.put(WeatherContract.WeatherEntry.WV_CITY, weatherValues.getCity());
-        values.put(WeatherContract.WeatherEntry.WV_CITY, weatherValues.getCity());
-        values.put(WeatherContract.WeatherEntry.WV_CITY, weatherValues.getCity());
-        values.put(WeatherContract.WeatherEntry.WV_CITY, weatherValues.getCity());
-        values.put(WeatherContract.WeatherEntry.WV_CITY, weatherValues.getCity());
-        values.put(WeatherContract.WeatherEntry.WV_CITY, weatherValues.getCity());
     }
 }

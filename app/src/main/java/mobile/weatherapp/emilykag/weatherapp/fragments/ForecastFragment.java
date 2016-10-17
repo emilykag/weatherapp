@@ -1,16 +1,23 @@
 package mobile.weatherapp.emilykag.weatherapp.fragments;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import mobile.weatherapp.emilykag.weatherapp.R;
+import mobile.weatherapp.emilykag.weatherapp.activities.SettingsActivity;
 import mobile.weatherapp.emilykag.weatherapp.adapters.ViewPagerAdapter;
 
 public class ForecastFragment extends Fragment {
@@ -37,7 +44,15 @@ public class ForecastFragment extends Fragment {
         tabLayout.setupWithViewPager(viewPager);
 
         layoutFragmentForecast = (LinearLayout) view.findViewById(R.id.layoutFragmentForecast);
+        ImageButton imageButtonMenu = (ImageButton) view.findViewById(R.id.imageButtonMenu);
         forecastFragment = this;
+
+        imageButtonMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showMenu(view);
+            }
+        });
 
         return view;
     }
@@ -134,5 +149,23 @@ public class ForecastFragment extends Fragment {
     private void setImageResource(String imgName) {
         int bgID = getResources().getIdentifier("drawable/bg_" + imgName, null, getContext().getPackageName());
         layoutFragmentForecast.setBackgroundResource(bgID);
+    }
+
+    private void showMenu(View v) {
+        PopupMenu popupMenu = new PopupMenu(getContext(), v);
+
+        MenuInflater inflater = popupMenu.getMenuInflater();
+        inflater.inflate(R.menu.menu_main, popupMenu.getMenu());
+        popupMenu.show();
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.action_settings) {
+                    startActivity(new Intent(getContext(), SettingsActivity.class));
+                }
+                return true;
+            }
+        });
     }
 }

@@ -29,7 +29,7 @@
 
         <provider
             android:name=".utils.databaseutils.WeatherProvider"
-            android:authorities="com.androidessence.moviedatabase"
+            android:authorities="mobile.weatherapp.emilykag.weatherapp"
             android:exported="false"
             android:protectionLevel="signature"
             android:syncable="true"/>
