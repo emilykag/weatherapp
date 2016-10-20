@@ -3,8 +3,11 @@
     <string name="action_settings">Settings</string>
 
     <string name="windspeed">Windspeed</string>
+    <string name="windspeed_value">%1$s km/h</string>
     <string name="humidity">Humidity</string>
+    <string name="humidity_value">%1$s %%</string>
     <string name="visibility">Visibility</string>
+    <string name="visibility_value">%1$s km</string>
     <string name="sunset">Sunset</string>
     <string name="sunrise">Sunrise</string>
 
@@ -17,5 +20,7 @@
     <string name="pref_location_key">location</string>
     <string name="pref_location_default">Thessaloniki</string>
     <string name="location_not_found">Location not found</string>
+
+    <string name="last_updated">Updated %1$s</string>
 
 </resources>

@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import mobile.weatherapp.emilykag.weatherapp.R;
 import mobile.weatherapp.emilykag.weatherapp.adapters.WeeklyForecastListAdapter;
@@ -18,7 +19,6 @@ import mobile.weatherapp.emilykag.weatherapp.models.Forecast;
 public class WeeklyForecastFragment extends Fragment {
 
     private ListView listViewWeaklyForecast;
-    private static WeeklyForecastFragment weeklyForecastFragment;
 
     public WeeklyForecastFragment() {
     }
@@ -29,16 +29,10 @@ public class WeeklyForecastFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_weekly_forecast, container, false);
         listViewWeaklyForecast = (ListView) view.findViewById(R.id.listViewWeaklyForecast);
 
-        weeklyForecastFragment = this;
-
         return view;
     }
 
-    public static WeeklyForecastFragment getInstance() {
-        return weeklyForecastFragment;
-    }
-
-    public void setWeeklyForecastList(ArrayList<Forecast> listForecast) {
+    public void setWeeklyForecastList(List<Forecast> listForecast) {
         WeeklyForecastListAdapter adapter = new WeeklyForecastListAdapter(getContext(), listForecast);
         listViewWeaklyForecast.setAdapter(adapter);
     }

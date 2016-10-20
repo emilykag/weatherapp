@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class Forecast implements Serializable {
 
+    private String _id;
     private String code;
     private String date;
     private String day;
@@ -14,6 +15,16 @@ public class Forecast implements Serializable {
     public Forecast() {
     }
 
+    public Forecast(String _id, String code, String date, String day, String high, String low, String text) {
+        this._id = _id;
+        this.code = code;
+        this.date = date;
+        this.day = day;
+        this.high = high;
+        this.low = low;
+        this.text = text;
+    }
+
     public Forecast(String code, String date, String day, String high, String low, String text) {
         this.code = code;
         this.date = date;
@@ -21,6 +32,10 @@ public class Forecast implements Serializable {
         this.high = high;
         this.low = low;
         this.text = text;
+    }
+
+    public String get_id() {
+        return _id;
     }
 
     public String getCode() {

@@ -23,7 +23,6 @@ import mobile.weatherapp.emilykag.weatherapp.adapters.ViewPagerAdapter;
 public class ForecastFragment extends Fragment {
 
     private LinearLayout layoutFragmentForecast;
-    private static ForecastFragment forecastFragment;
 
     public ForecastFragment() {
     }
@@ -45,8 +44,6 @@ public class ForecastFragment extends Fragment {
 
         layoutFragmentForecast = (LinearLayout) view.findViewById(R.id.layoutFragmentForecast);
         ImageButton imageButtonMenu = (ImageButton) view.findViewById(R.id.imageButtonMenu);
-        forecastFragment = this;
-
         imageButtonMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,10 +52,6 @@ public class ForecastFragment extends Fragment {
         });
 
         return view;
-    }
-
-    public static ForecastFragment getInstance() {
-        return forecastFragment;
     }
 
     public void setWeatherImage(String code) {

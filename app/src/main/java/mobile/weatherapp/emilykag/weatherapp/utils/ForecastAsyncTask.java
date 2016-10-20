@@ -12,10 +12,12 @@ public class ForecastAsyncTask extends AsyncTask<String, Void, Response> {
 
     private Callback callback;
     private ProgressBar progressBar;
+    private int type;
 
-    public ForecastAsyncTask(Callback callback, ProgressBar progressBar) {
+    public ForecastAsyncTask(Callback callback, ProgressBar progressBar, int type) {
         this.callback = callback;
         this.progressBar = progressBar;
+        this.type = type;
     }
 
     @Override
@@ -34,8 +36,9 @@ public class ForecastAsyncTask extends AsyncTask<String, Void, Response> {
     @Override
     protected void onPostExecute(Response forecastJsonStr) {
         if (forecastJsonStr.getCode() == 200) {
+            System.out.println(forecastJsonStr.getResponse());
             WeatherValues weatherValues = JSONParser.jsonParser(forecastJsonStr.getResponse());
-            callback.setViews(weatherValues, false);
+            callback.setViews(weatherValues, type);
         } else {
             callback.showFailure(forecastJsonStr.getCode());
         }

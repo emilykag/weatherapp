@@ -88,20 +88,20 @@ public class WeatherProvider extends ContentProvider {
         long _id;
         Uri returnUri;
 
-        switch(sUriMatcher.match(uri)){
+        switch (sUriMatcher.match(uri)) {
             case WEATHER_VALUES:
                 _id = db.insert(WeatherContract.WeatherEntry.TABLE_NAME_WEATHER_VALUES, null, contentValues);
-                if(_id > 0){
-                    returnUri =  WeatherContract.WeatherEntry.buildWeatherValuesUri(_id);
-                } else{
+                if (_id > 0) {
+                    returnUri = WeatherContract.WeatherEntry.buildWeatherValuesUri(_id);
+                } else {
                     throw new UnsupportedOperationException("Unable to insert rows into: " + uri);
                 }
                 break;
             case FORECAST:
                 _id = db.insert(WeatherContract.ForecastEntry.TABLE_NAME_FORECAST, null, contentValues);
-                if(_id > 0){
+                if (_id > 0) {
                     returnUri = WeatherContract.ForecastEntry.buildForecastUri(_id);
-                } else{
+                } else {
                     throw new UnsupportedOperationException("Unable to insert rows into: " + uri);
                 }
                 break;
@@ -120,7 +120,7 @@ public class WeatherProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int rows; // Number of rows effected
 
-        switch(sUriMatcher.match(uri)){
+        switch (sUriMatcher.match(uri)) {
             case WEATHER_VALUES:
                 rows = db.delete(WeatherContract.WeatherEntry.TABLE_NAME_WEATHER_VALUES, selection, selectionArgs);
                 break;
@@ -132,7 +132,7 @@ public class WeatherProvider extends ContentProvider {
         }
 
         // Because null could delete all rows:
-        if(selection == null || rows != 0){
+        if (selection == null || rows != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
@@ -144,7 +144,7 @@ public class WeatherProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int rows;
 
-        switch(sUriMatcher.match(uri)){
+        switch (sUriMatcher.match(uri)) {
             case WEATHER_VALUES:
                 rows = db.update(WeatherContract.WeatherEntry.TABLE_NAME_WEATHER_VALUES, contentValues, selection, selectionArgs);
                 break;
@@ -155,12 +155,47 @@ public class WeatherProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
-        if(rows != 0){
+        if (rows != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
         return rows;
     }
+
+    @Override
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int rowsInserted = 0;
+        long _id;
+
+        switch (sUriMatcher.match(uri)) {
+            case WEATHER_VALUES:
+                for (ContentValues contentValues : values) {
+                    _id = db.insert(WeatherContract.WeatherEntry.TABLE_NAME_WEATHER_VALUES, null, contentValues);
+                    if (_id <= 0) {
+                        throw new UnsupportedOperationException("Unable to insert rows into: " + uri);
+                    }
+                }
+                break;
+            case FORECAST:
+                for (ContentValues contentValues : values) {
+                    _id = db.insert(WeatherContract.ForecastEntry.TABLE_NAME_FORECAST, null, contentValues);
+                    if (_id <= 0) {
+                        throw new UnsupportedOperationException("Unable to insert rows into: " + uri);
+                    }
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        getContext().getContentResolver().notifyChange(uri, null);
+        rowsInserted = values.length;
+
+        return rowsInserted;
+    }
+
+
 
     public static UriMatcher buildUriMatcher() {
         String content = WeatherContract.CONTENT_AUTHORITY;

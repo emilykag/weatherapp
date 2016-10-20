@@ -1,6 +1,5 @@
 package mobile.weatherapp.emilykag.weatherapp.fragments;
 
-
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -15,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,13 +28,16 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import mobile.weatherapp.emilykag.weatherapp.R;
 import mobile.weatherapp.emilykag.weatherapp.interfaces.Callback;
+import mobile.weatherapp.emilykag.weatherapp.models.Forecast;
 import mobile.weatherapp.emilykag.weatherapp.models.WeatherValues;
+import mobile.weatherapp.emilykag.weatherapp.utils.DateUtils;
 import mobile.weatherapp.emilykag.weatherapp.utils.ForecastAsyncTask;
 import mobile.weatherapp.emilykag.weatherapp.utils.databaseutils.DatabaseActions;
 import mobile.weatherapp.emilykag.weatherapp.utils.databaseutils.WeatherContract;
@@ -55,6 +58,10 @@ public class MainForecastFragment extends Fragment implements Callback {
     private ProgressBar progressBarMainForecast;
     private LinearLayout linearLayoutMainWeather;
     private TextView textViewLocationNotFound;
+    private TextView textViewLastUpdated;
+    private SwipeRefreshLayout swipeRefreshLayoutMainForecast;
+
+    private OnFragmentInteractionListener mListener;
 
     private DatabaseActions databaseActions;
 
@@ -79,6 +86,20 @@ public class MainForecastFragment extends Fragment implements Callback {
         progressBarMainForecast = (ProgressBar) view.findViewById(R.id.progressBarMainForecast);
         linearLayoutMainWeather = (LinearLayout) view.findViewById(R.id.linearLayoutMainWeather);
         textViewLocationNotFound = (TextView) view.findViewById(R.id.textViewLocationNotFound);
+        textViewLastUpdated = (TextView) view.findViewById(R.id.textViewLastUpdated);
+        swipeRefreshLayoutMainForecast = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayoutMainForecast);
+
+        swipeRefreshLayoutMainForecast.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayoutMainForecast.setRefreshing(true);
+                // do refresh
+                updateWeather(1);
+                if (swipeRefreshLayoutMainForecast.isRefreshing()) {
+                    swipeRefreshLayoutMainForecast.setRefreshing(false);
+                }
+            }
+        });
 
         return view;
     }
@@ -86,11 +107,32 @@ public class MainForecastFragment extends Fragment implements Callback {
     @Override
     public void onStart() {
         super.onStart();
+        onLoad();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    private void onLoad() {
         databaseActions = new DatabaseActions(getContext());
         WeatherValues weatherValues = databaseActions.retrieveWeatherValues();
         if (weatherValues == null) {
             if (isNetworkAvailable()) {
-                updateWeather();
+                updateWeather(2);
             } else {
                 new AlertDialog.Builder(getContext())
                         .setMessage(getString(R.string.no_internet_message))
@@ -103,20 +145,26 @@ public class MainForecastFragment extends Fragment implements Callback {
                         .show();
             }
         } else {
-            setViews(weatherValues, true);
+            setViews(weatherValues, 0);
         }
     }
 
-    private void updateWeather() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+    private void updateWeather(int type) {
+        PreferenceManager.getDefaultSharedPreferences(getContext()).edit()
+                .putString("lastUpdated", DateUtils.formatLastUpdatedDate(Calendar.getInstance().getTime())).apply();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         String location = prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-        ForecastAsyncTask forecastAsyncTask = new ForecastAsyncTask(this, progressBarMainForecast);
+        ForecastAsyncTask forecastAsyncTask = new ForecastAsyncTask(this, progressBarMainForecast, type);
         forecastAsyncTask.execute(location, "c");
     }
 
     @Override
-    public void setViews(WeatherValues weatherValues, boolean isSaved) {
-        if (isSaved) {
+    public void setViews(WeatherValues weatherValues, int type) {
+        if (type == 0) {
+            setWeatherToViews(weatherValues);
+        } else if (type == 1) { // update database
+            WeatherValues oldWeatherValues = databaseActions.retrieveWeatherValues();
+            databaseActions.updateWeatherValues(oldWeatherValues.get_id(), weatherValues);
             setWeatherToViews(weatherValues);
         } else {
             if (weatherValues != null) {
@@ -128,6 +176,7 @@ public class MainForecastFragment extends Fragment implements Callback {
                 textViewLocationNotFound.setText(R.string.location_not_found);
             }
         }
+        textViewLastUpdated.setText(getString(R.string.last_updated, PreferenceManager.getDefaultSharedPreferences(getContext()).getString("lastUpdated", "")));
     }
 
     @Override
@@ -142,16 +191,16 @@ public class MainForecastFragment extends Fragment implements Callback {
         textViewDate.setText(getDate());
         textViewTemp.setText(weatherValues.getTemperature() + " " + (char) 0x00B0 + "C");
         textViewDesc.setText(weatherValues.getNowDescription());
-        textViewWindspeed.setText(weatherValues.getWindSpeed() + " km/h");
-        textViewHumidity.setText(weatherValues.getHumidity() + " %");
-        textViewVisibility.setText(weatherValues.getVisibility() + " km");
+        textViewWindspeed.setText(getString(R.string.windspeed_value, weatherValues.getWindSpeed()));
+        textViewHumidity.setText(getString(R.string.humidity_value, weatherValues.getHumidity()));
+        textViewVisibility.setText(getString(R.string.visibility_value, weatherValues.getVisibility()));
         textViewSunrise.setText(weatherValues.getSunrise());
         textViewSunset.setText(weatherValues.getSunset());
-//        textViewToday.setText(weatherValues.getListForecast().get(0).getLow() + (char) 0x00B0 + "C / " +
-//                weatherValues.getListForecast().get(0).getHigh() + (char) 0x00B0 + "C");
+        textViewToday.setText(weatherValues.getListForecast().get(0).getLow() + (char) 0x00B0 + "C / " +
+                weatherValues.getListForecast().get(0).getHigh() + (char) 0x00B0 + "C");
         setWeatherImage(weatherValues.getCode());
-        ForecastFragment.getInstance().setWeatherImage(weatherValues.getCode());
-        WeeklyForecastFragment.getInstance().setWeeklyForecastList(weatherValues.getListForecast());
+        mListener.setWeatherImage(weatherValues.getCode());
+        mListener.setWeeklyForecastList(weatherValues.getListForecast());
     }
 
     private String getDate() {
@@ -254,5 +303,12 @@ public class MainForecastFragment extends Fragment implements Callback {
         NetworkInfo info = (NetworkInfo) ((ConnectivityManager)
                 getContext().getSystemService(getContext().CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
         return info != null;
+    }
+
+    public interface OnFragmentInteractionListener {
+
+        public void setWeeklyForecastList(List<Forecast> listForecast);
+
+        public void setWeatherImage(String code);
     }
 }
