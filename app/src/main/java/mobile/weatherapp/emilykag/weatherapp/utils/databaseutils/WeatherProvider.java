@@ -195,8 +195,6 @@ public class WeatherProvider extends ContentProvider {
         return rowsInserted;
     }
 
-
-
     public static UriMatcher buildUriMatcher() {
         String content = WeatherContract.CONTENT_AUTHORITY;
         // All paths to the UriMatcher have a corresponding code to return

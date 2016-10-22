@@ -1,5 +1,6 @@
 package mobile.weatherapp.emilykag.weatherapp.utils.databaseutils;
 
+import android.content.ContentProviderOperation;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -135,9 +136,9 @@ public class DatabaseActions {
         context.getContentResolver().bulkInsert(WeatherContract.ForecastEntry.CONTENT_URI, contentValues);
     }
 
-    public void updateWeatherValues(String oldID, WeatherValues weatherValues) {
+    public void updateWeatherValues(WeatherValues oldWeatherValues, WeatherValues weatherValues) {
         ContentValues values = new ContentValues();
-        values.put(WeatherContract.WeatherEntry._ID, oldID);
+        values.put(WeatherContract.WeatherEntry._ID, oldWeatherValues.get_id());
         values.put(WeatherContract.WeatherEntry.WV_CITY, weatherValues.getCity());
         values.put(WeatherContract.WeatherEntry.WV_WINDSPEED, weatherValues.getWindSpeed());
         values.put(WeatherContract.WeatherEntry.WV_HUMIDITY, weatherValues.getHumidity());
@@ -151,17 +152,19 @@ public class DatabaseActions {
         context.getContentResolver().update(WeatherContract.WeatherEntry.CONTENT_URI,
                 values,
                 WeatherContract.WeatherEntry._ID + " = ?",
-                new String[]{String.valueOf(oldID)}
+                new String[]{String.valueOf(oldWeatherValues.get_id())}
         );
 
-        for (Forecast forecast : weatherValues.getListForecast()) {
-            updateForecast(forecast);
+        for (int i = 0; i < oldWeatherValues.getListForecast().size(); i++) {
+            Forecast oldForecast = oldWeatherValues.getListForecast().get(i);
+            Forecast forecast = weatherValues.getListForecast().get(i);
+            updateForecast(oldForecast, forecast);
         }
     }
 
-    private void updateForecast(Forecast forecast) {
+    private void updateForecast(Forecast oldForecast, Forecast forecast) {
         ContentValues values = new ContentValues();
-        values.put(WeatherContract.ForecastEntry._ID, forecast.get_id());
+        values.put(WeatherContract.ForecastEntry._ID, oldForecast.get_id());
         values.put(WeatherContract.ForecastEntry.F_CODE, forecast.getCode());
         values.put(WeatherContract.ForecastEntry.F_DATE, forecast.getDate());
         values.put(WeatherContract.ForecastEntry.F_DAY, forecast.getDay());
@@ -172,7 +175,7 @@ public class DatabaseActions {
         context.getContentResolver().update(WeatherContract.ForecastEntry.CONTENT_URI,
                 values,
                 WeatherContract.ForecastEntry._ID + " = ?",
-                new String[]{String.valueOf(forecast.get_id())}
+                new String[]{String.valueOf(oldForecast.get_id())}
         );
     }
 

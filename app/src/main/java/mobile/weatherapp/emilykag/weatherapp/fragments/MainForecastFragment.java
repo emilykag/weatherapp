@@ -160,28 +160,32 @@ public class MainForecastFragment extends Fragment implements Callback {
 
     @Override
     public void setViews(WeatherValues weatherValues, int type) {
-        if (type == 0) {
-            setWeatherToViews(weatherValues);
-        } else if (type == 1) { // update database
-            WeatherValues oldWeatherValues = databaseActions.retrieveWeatherValues();
-            databaseActions.updateWeatherValues(oldWeatherValues.get_id(), weatherValues);
-            setWeatherToViews(weatherValues);
-        } else {
-            if (weatherValues != null) {
+        if (weatherValues != null) {
+            if (type == 0) {
+                setWeatherToViews(weatherValues);
+            } else if (type == 1) { // update database
+                WeatherValues oldWeatherValues = databaseActions.retrieveWeatherValues();
+                databaseActions.updateWeatherValues(oldWeatherValues, weatherValues);
+                setWeatherToViews(weatherValues);
+            } else {
                 setWeatherToViews(weatherValues);
                 databaseActions.addWeatherValues(weatherValues);
-            } else {
-                linearLayoutMainWeather.setVisibility(View.GONE);
-                textViewLocationNotFound.setVisibility(View.VISIBLE);
-                textViewLocationNotFound.setText(R.string.location_not_found);
             }
+        } else {
+            linearLayoutMainWeather.setVisibility(View.GONE);
+            textViewLocationNotFound.setVisibility(View.VISIBLE);
+            textViewLocationNotFound.setText(R.string.location_not_found);
         }
         textViewLastUpdated.setText(getString(R.string.last_updated, PreferenceManager.getDefaultSharedPreferences(getContext()).getString("lastUpdated", "")));
     }
 
     @Override
     public void showFailure(int statusCode) {
-        Toast.makeText(getContext(), "Error " + String.valueOf(statusCode), Toast.LENGTH_LONG).show();
+        String message = "Error " + String.valueOf(statusCode);
+        if (!isNetworkAvailable()) {
+            message = getString(R.string.no_internet_message);
+        }
+        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
     }
 
     private void setWeatherToViews(WeatherValues weatherValues) {
