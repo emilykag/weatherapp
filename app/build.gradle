@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "mobile.weatherapp.emilykag.weatherapp"
+        applicationId "com.emilykag.weatherapp"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1

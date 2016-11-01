@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".fragments.ForecastFragment"
+    tools:context="com.emilykag.weatherapp.fragments.ForecastFragment"
     tools:showIn="@layout/activity_forecast">
 
     <LinearLayout

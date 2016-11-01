@@ -23,4 +23,8 @@
 
     <string name="last_updated">Updated %1$s</string>
 
+    <!--sync adapter strings-->
+    <string name="sync_account_type">weatherapp.emilykag.com</string>
+    <string name="content_authority">com.emilykag.weatherapp</string>
+
 </resources>
