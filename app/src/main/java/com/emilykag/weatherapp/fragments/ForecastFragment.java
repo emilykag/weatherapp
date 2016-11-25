@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import com.emilykag.weatheapp.R;
 import com.emilykag.weatherapp.adapters.ViewPagerAdapter;
 import com.emilykag.weatherapp.activities.SettingsActivity;
+import com.emilykag.weatherapp.utils.WeatherImageTool;
 
 public class ForecastFragment extends Fragment {
 
@@ -52,96 +53,6 @@ public class ForecastFragment extends Fragment {
         return view;
     }
 
-    public void setWeatherImage(String code) {
-        switch (code) {
-            case "0":
-            case "2":
-                setImageResource("tornado");
-                break;
-            case "1":
-            case "3":
-            case "4":
-            case "37":
-            case "38":
-            case "39":
-            case "45":
-            case "47":
-                setImageResource("thunderstorms");
-                break;
-            case "5":
-            case "6":
-            case "7":
-            case "18":
-                setImageResource("rainandsnowmixed");
-                break;
-            case "8":
-            case "9":
-            case "10":
-            case "17":
-            case "35":
-                setImageResource("rain");
-                break;
-            case "11":
-            case "12":
-            case "40":
-                setImageResource("shower");
-                break;
-            case "13":
-            case "14":
-                setImageResource("flurries");
-                break;
-            case "15":
-            case "16":
-            case "41":
-            case "42":
-            case "43":
-            case "46":
-                setImageResource("snow");
-                break;
-            case "19":
-            case "20":
-            case "21":
-            case "22":
-                setImageResource("fog");
-                break;
-            case "23":
-            case "24":
-                setImageResource("windy");
-                break;
-            case "25":
-                setImageResource("cold");
-                break;
-            case "26":
-            case "44":
-                setImageResource("mostlycloudy");
-                break;
-            case "27":
-            case "29":
-                setImageResource("mostlyclear");
-                break;
-            case "28":
-            case "30":
-                setImageResource("partlysunny");
-                break;
-            case "31":
-            case "33":
-                setImageResource("clear");
-                break;
-            case "32":
-            case "34":
-                setImageResource("sunny");
-                break;
-            case "36":
-                setImageResource("hot");
-                break;
-        }
-    }
-
-    private void setImageResource(String imgName) {
-        int bgID = getResources().getIdentifier("drawable/bg_" + imgName, null, getContext().getPackageName());
-        layoutFragmentForecast.setBackgroundResource(bgID);
-    }
-
     private void showMenu(View v) {
         PopupMenu popupMenu = new PopupMenu(getContext(), v);
 
@@ -158,5 +69,9 @@ public class ForecastFragment extends Fragment {
                 return true;
             }
         });
+    }
+
+    public void setBackgroundImage(String code) {
+        new WeatherImageTool(getContext(), layoutFragmentForecast).setWeatherImage(code, "back");
     }
 }

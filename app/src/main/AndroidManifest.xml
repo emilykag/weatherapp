@@ -39,26 +39,16 @@
             android:protectionLevel="signature"
             android:syncable="true" />
 
-        <service android:name="com.emilykag.weatherapp.service.sync.WeatherAuthenticatorService">
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
-        </service>
-
         <service
-            android:name="com.emilykag.weatherapp.service.sync.WeatherSyncService"
-            android:exported="true">
+            android:name="com.emilykag.weatherapp.service.ForecastService"
+            android:exported="false" />
+
+        <receiver android:name="com.emilykag.weatherapp.service.WeatherReceiver" >
             <intent-filter>
-                <action android:name="android.content.SyncAdapter" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
-            <meta-data
-                android:name="android.content.SyncAdapter"
-                android:resource="@xml/syncadapter" />
-        </service>
+            </receiver>
+
     </application>
 
 </manifest>

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public class ViewPagerAdapter extends FragmentPagerAdapter {
     private ArrayList<Fragment> fragments = new ArrayList<>();
     private ArrayList<String> tabTitles = new ArrayList<>();
-    private long baseId = 0;
 
     public ViewPagerAdapter(FragmentManager fm) {
         super(fm);

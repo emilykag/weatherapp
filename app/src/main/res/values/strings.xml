@@ -16,15 +16,35 @@
 
     <string name="no_internet_message">No Internet Connection</string>
 
+    <string name="content_authority">com.emilykag.weatherapp</string>
+
+    <string name="location_not_found">Location not found</string>
+    <string name="last_updated">Updated %1$s</string>
+
+    <!--settings strings-->
     <string name="pref_location_label">Location</string>
     <string name="pref_location_key">location</string>
     <string name="pref_location_default">Thessaloniki</string>
-    <string name="location_not_found">Location not found</string>
 
-    <string name="last_updated">Updated %1$s</string>
+    <string name="pref_refresh_label">Refresh Time</string>
+    <string name="pref_refresh_key">refreshTime</string>
+    <string name="pref_refresh_default">0</string>
+    <string name="pref_refresh_summary">Select the period of refresh</string>
 
-    <!--sync adapter strings-->
-    <string name="sync_account_type">weatherapp.emilykag.com</string>
-    <string name="content_authority">com.emilykag.weatherapp</string>
+    <string-array name="listArrayRefreshTime">
+        <item>Manual</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>12 hours</item>
+    </string-array>
+
+    <string-array name="listValuesRefreshTime">
+        <item>0</item>
+        <item>1</item>
+        <item>3</item>
+        <item>6</item>
+        <item>12</item>
+    </string-array>
 
 </resources>

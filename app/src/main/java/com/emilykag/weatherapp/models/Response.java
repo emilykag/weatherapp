@@ -1,6 +1,8 @@
 package com.emilykag.weatherapp.models;
 
-public class Response {
+import java.io.Serializable;
+
+public class Response implements Serializable {
 
     private String response;
     private int code;

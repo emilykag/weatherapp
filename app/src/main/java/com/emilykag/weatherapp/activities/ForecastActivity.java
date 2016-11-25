@@ -36,7 +36,7 @@ public class ForecastActivity extends AppCompatActivity implements MainForecastF
     public void setWeatherImage(String code) {
         ForecastFragment forecastFragment = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
         if (forecastFragment != null) {
-            forecastFragment.setWeatherImage(code);
+            forecastFragment.setBackgroundImage(code);
         }
     }
 }

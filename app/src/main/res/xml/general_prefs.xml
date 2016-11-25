@@ -2,10 +2,18 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <EditTextPreference
-        android:title="@string/pref_location_label"
-        android:key="@string/pref_location_key"
         android:defaultValue="@string/pref_location_default"
         android:inputType="text"
-        android:singleLine="true"/>
+        android:key="@string/pref_location_key"
+        android:singleLine="true"
+        android:title="@string/pref_location_label" />
+
+    <ListPreference
+        android:defaultValue="@string/pref_refresh_default"
+        android:entries="@array/listArrayRefreshTime"
+        android:entryValues="@array/listValuesRefreshTime"
+        android:key="@string/pref_refresh_key"
+        android:summary="@string/pref_refresh_summary"
+        android:title="@string/pref_refresh_label" />
 
 </PreferenceScreen>
