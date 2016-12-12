@@ -8,7 +8,7 @@ import java.util.Locale;
 public class DateUtils {
 
     public static String formatLastUpdatedDate(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM HH:mm", Locale.getDefault());
         return sdf.format(date);
     }
 

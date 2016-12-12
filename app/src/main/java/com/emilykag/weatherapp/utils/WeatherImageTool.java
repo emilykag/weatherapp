@@ -3,12 +3,16 @@ package com.emilykag.weatherapp.utils;
 import android.content.Context;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RemoteViews;
+
+import com.emilykag.weatheapp.R;
 
 public class WeatherImageTool {
 
     private Context context;
     private ImageView imageViewWeatherIcon;
     private LinearLayout layoutFragmentForecast;
+    private RemoteViews views;
 
     public WeatherImageTool(Context context, ImageView imageViewWeatherIcon) {
         this.context = context;
@@ -18,6 +22,11 @@ public class WeatherImageTool {
     public WeatherImageTool(Context context, LinearLayout layoutFragmentForecast) {
         this.context = context;
         this.layoutFragmentForecast = layoutFragmentForecast;
+    }
+
+    public WeatherImageTool(Context context, RemoteViews views) {
+        this.context = context;
+        this.views = views;
     }
 
     public void setWeatherImage(String code, String type) {
@@ -104,10 +113,19 @@ public class WeatherImageTool {
                 imgRes = "hot";
                 break;
         }
-        if(type.equals("back")) {
-            setBackResource(imgRes);
-        } else {
-            setImageResource(imgRes);
+        switch (type) {
+            case "back":
+                setBackResource(imgRes);
+                break;
+            case "image":
+                setImageResource(imgRes);
+                break;
+            case "widget":
+                setWidgetImageResource(imgRes);
+                break;
+            case "widgetBack":
+                setWidgetBackResource(imgRes);
+                break;
         }
     }
 
@@ -119,5 +137,15 @@ public class WeatherImageTool {
     private void setImageResource(String imgName) {
         int resID = context.getResources().getIdentifier("drawable/ic_" + imgName, null, context.getPackageName());
         imageViewWeatherIcon.setImageResource(resID);
+    }
+
+    private void setWidgetImageResource(String imgName) {
+        int resID = context.getResources().getIdentifier("drawable/ic_" + imgName, null, context.getPackageName());
+        views.setImageViewResource(R.id.imageViewWeatherIcon, resID);
+    }
+
+    private void setWidgetBackResource(String imgName) {
+        int resID = context.getResources().getIdentifier("drawable/widget_" + imgName, null, context.getPackageName());
+        views.setInt(R.id.linearLayoutWidgetBackground, "setBackgroundResource", resID);
     }
 }

@@ -8,8 +8,10 @@ import android.net.Uri;
 
 import com.emilykag.weatherapp.models.Forecast;
 import com.emilykag.weatherapp.models.WeatherValues;
+import com.emilykag.weatherapp.utils.DateUtils;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,9 +46,10 @@ public class DatabaseActions {
                 String code = cursor.getString(cursor.getColumnIndex(WeatherContract.WeatherEntry.WV_CODE));
                 String temp = cursor.getString(cursor.getColumnIndex(WeatherContract.WeatherEntry.WV_TEMPERATURE));
                 String description = cursor.getString(cursor.getColumnIndex(WeatherContract.WeatherEntry.WV_NOW_DESCRIPTION));
+                String lastUpdated = cursor.getString(cursor.getColumnIndex(WeatherContract.WeatherEntry.WV_LAST_UPDATED));
 
                 weatherValues = new WeatherValues(id, city, windspeed, humidity, visibility, sunrise, sunset, code,
-                        temp, description, retrieveForecast());
+                        temp, description, lastUpdated, retrieveForecast());
             } while (cursor.moveToNext());
         }
         if (cursor != null) {
@@ -95,6 +98,8 @@ public class DatabaseActions {
         values.put(WeatherContract.WeatherEntry.WV_CODE, weatherValues.getCode());
         values.put(WeatherContract.WeatherEntry.WV_TEMPERATURE, weatherValues.getTemperature());
         values.put(WeatherContract.WeatherEntry.WV_NOW_DESCRIPTION, weatherValues.getNowDescription());
+        values.put(WeatherContract.WeatherEntry.WV_LAST_UPDATED,
+                DateUtils.formatLastUpdatedDate(Calendar.getInstance().getTime()));
 
         Uri movieInsertUri = context.getContentResolver().insert(WeatherContract.WeatherEntry.CONTENT_URI, values);
         long movieRowId = ContentUris.parseId(movieInsertUri);
@@ -145,6 +150,8 @@ public class DatabaseActions {
         values.put(WeatherContract.WeatherEntry.WV_CODE, weatherValues.getCode());
         values.put(WeatherContract.WeatherEntry.WV_TEMPERATURE, weatherValues.getTemperature());
         values.put(WeatherContract.WeatherEntry.WV_NOW_DESCRIPTION, weatherValues.getNowDescription());
+        values.put(WeatherContract.WeatherEntry.WV_LAST_UPDATED,
+                DateUtils.formatLastUpdatedDate(Calendar.getInstance().getTime()));
 
         context.getContentResolver().update(WeatherContract.WeatherEntry.CONTENT_URI,
                 values,

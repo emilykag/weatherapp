@@ -6,7 +6,7 @@ import android.content.Intent;
 
 import com.emilykag.weatherapp.utils.Tools;
 
-public class WeatherReceiver extends BroadcastReceiver {
+public class StartForecastServiceReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {

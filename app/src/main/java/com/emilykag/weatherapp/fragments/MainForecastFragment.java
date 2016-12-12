@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -20,10 +19,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.emilykag.weatheapp.R;
+import com.emilykag.weatherapp.interfaces.Callback;
 import com.emilykag.weatherapp.models.Forecast;
 import com.emilykag.weatherapp.models.Response;
 import com.emilykag.weatherapp.models.WeatherValues;
 import com.emilykag.weatherapp.service.ForecastService;
+import com.emilykag.weatherapp.service.WeatherWidgetService;
 import com.emilykag.weatherapp.utils.DateUtils;
 import com.emilykag.weatherapp.utils.JSONParser;
 import com.emilykag.weatherapp.utils.Tools;
@@ -32,7 +33,7 @@ import com.emilykag.weatherapp.utils.databaseutils.DatabaseActions;
 
 import java.util.List;
 
-public class MainForecastFragment extends Fragment {
+public class MainForecastFragment extends Fragment implements Callback {
 
     private static MainForecastFragment instance;
 
@@ -130,6 +131,12 @@ public class MainForecastFragment extends Fragment {
         getActivity().registerReceiver(forecastReceiver, new IntentFilter("ForecastService"));
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(forecastReceiver);
+    }
+
     private void onLoad() {
         databaseActions = new DatabaseActions(getContext());
         WeatherValues weatherValues = databaseActions.retrieveWeatherValues();
@@ -186,12 +193,12 @@ public class MainForecastFragment extends Fragment {
                 setWeatherToViews(weatherValues);
                 databaseActions.addWeatherValues(weatherValues);
             }
+            getActivity().startService(new Intent(getContext(), WeatherWidgetService.class));
         } else {
             linearLayoutMainWeather.setVisibility(View.GONE);
             textViewLocationNotFound.setVisibility(View.VISIBLE);
             textViewLocationNotFound.setText(R.string.location_not_found);
         }
-        textViewLastUpdated.setText(getString(R.string.last_updated, PreferenceManager.getDefaultSharedPreferences(getContext()).getString("lastUpdated", "")));
     }
 
     public void showFailure(int statusCode) {
@@ -219,12 +226,13 @@ public class MainForecastFragment extends Fragment {
         new WeatherImageTool(getContext(), imageViewWeatherIcon).setWeatherImage(weatherValues.getCode(), "image");
         mListener.setWeatherImage(weatherValues.getCode());
         mListener.setWeeklyForecastList(weatherValues.getListForecast());
+        textViewLastUpdated.setText(getString(R.string.last_updated, weatherValues.getLastUpdated()));
     }
 
     public interface OnFragmentInteractionListener {
 
-        public void setWeeklyForecastList(List<Forecast> listForecast);
+        void setWeeklyForecastList(List<Forecast> listForecast);
 
-        public void setWeatherImage(String code);
+        void setWeatherImage(String code);
     }
 }

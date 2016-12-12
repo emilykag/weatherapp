@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class JSONParser {
 
@@ -70,7 +71,8 @@ public class JSONParser {
                 }
 
                 weatherValues = new WeatherValues(count, city, windSpeed, humidity, visibility,
-                        sunrise, sunset, code, temperature, nowDescription, listForecast);
+                        sunrise, sunset, code, temperature, nowDescription,
+                        DateUtils.formatLastUpdatedDate(Calendar.getInstance().getTime()), listForecast);
             }
         } catch (JSONException e) {
             e.printStackTrace();

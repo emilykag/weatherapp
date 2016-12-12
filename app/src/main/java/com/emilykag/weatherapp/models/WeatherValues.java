@@ -16,12 +16,15 @@ public class WeatherValues implements Serializable {
     private String code;
     private String temperature;
     private String nowDescription;
+    private String lastUpdated;
     private List<Forecast> listForecast;
 
     public WeatherValues() {
     }
 
-    public WeatherValues(String _id, String city, String windSpeed, String humidity, String visibility, String sunrise, String sunset, String code, String temperature, String nowDescription, List<Forecast> listForecast) {
+    public WeatherValues(String _id, String city, String windSpeed, String humidity, String visibility, String sunrise,
+                         String sunset, String code, String temperature, String nowDescription, String lastUpdated,
+                         List<Forecast> listForecast) {
         this._id = _id;
         this.city = city;
         this.windSpeed = windSpeed;
@@ -32,11 +35,13 @@ public class WeatherValues implements Serializable {
         this.code = code;
         this.temperature = temperature;
         this.nowDescription = nowDescription;
+        this.lastUpdated = lastUpdated;
         this.listForecast = listForecast;
     }
 
     public WeatherValues(int count, String city, String windSpeed, String humidity, String visibility, String sunrise,
-                         String sunset, String code, String temperature, String nowDescription, List<Forecast> listForecast) {
+                         String sunset, String code, String temperature, String nowDescription, String lastUpdated,
+                         List<Forecast> listForecast) {
         this.count = count;
         this.city = city;
         this.windSpeed = windSpeed;
@@ -47,6 +52,7 @@ public class WeatherValues implements Serializable {
         this.code = code;
         this.temperature = temperature;
         this.nowDescription = nowDescription;
+        this.lastUpdated = lastUpdated;
         this.listForecast = listForecast;
     }
 
@@ -92,6 +98,10 @@ public class WeatherValues implements Serializable {
 
     public String getNowDescription() {
         return nowDescription;
+    }
+
+    public String getLastUpdated() {
+        return lastUpdated;
     }
 
     public List<Forecast> getListForecast() {

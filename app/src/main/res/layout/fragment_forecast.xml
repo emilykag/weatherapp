@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="#80353538"
+            android:background="#50353538"
             app:tabGravity="fill"
             app:tabIndicatorColor="#ffffff"
             app:tabMode="fixed"
@@ -31,7 +31,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|end"
             android:layout_weight="1"
-            android:background="#80353538"
+            android:background="#50353538"
             app:srcCompat="@drawable/menu"
             android:paddingRight="35dp"
             android:paddingLeft="35dp" />

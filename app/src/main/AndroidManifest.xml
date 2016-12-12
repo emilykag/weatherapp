@@ -43,12 +43,29 @@
             android:name="com.emilykag.weatherapp.service.ForecastService"
             android:exported="false" />
 
-        <receiver android:name="com.emilykag.weatherapp.service.WeatherReceiver" >
+        <receiver android:name="com.emilykag.weatherapp.service.StartForecastServiceReceiver">
             <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
-            </receiver>
+        </receiver>
+        <receiver android:name="com.emilykag.weatherapp.widgets.WeatherWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
 
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_info" />
+        </receiver>
+
+        <service
+            android:name="com.emilykag.weatherapp.service.ClockWidgetService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name="com.emilykag.weatherapp.service.WeatherWidgetService"
+            android:enabled="true"
+            android:exported="false"></service>
     </application>
 
 </manifest>

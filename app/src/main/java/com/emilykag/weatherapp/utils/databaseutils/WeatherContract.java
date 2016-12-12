@@ -34,6 +34,7 @@ public class WeatherContract {
         static final String WV_CODE = "code";
         static final String WV_TEMPERATURE = "temperature";
         static final String WV_NOW_DESCRIPTION = "now_description";
+        static final String WV_LAST_UPDATED = "last_updated";
 
         // Define a function to build a URI to find a specific movie by it's identifier
         static Uri buildWeatherValuesUri(long id) {

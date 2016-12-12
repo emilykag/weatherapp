@@ -24,7 +24,8 @@ class WeatherDBHelper extends SQLiteOpenHelper {
             WeatherContract.WeatherEntry.WV_SUNSET + " TEXT NOT NULL, " +
             WeatherContract.WeatherEntry.WV_CODE + " TEXT NOT NULL, " +
             WeatherContract.WeatherEntry.WV_TEMPERATURE + " TEXT NOT NULL, " +
-            WeatherContract.WeatherEntry.WV_NOW_DESCRIPTION + " TEXT NOT NULL" +
+            WeatherContract.WeatherEntry.WV_NOW_DESCRIPTION + " TEXT NOT NULL, " +
+            WeatherContract.WeatherEntry.WV_LAST_UPDATED + " TEXT NOT NULL" +
             ");";
 
     private static final String CREATE_TABLE_FORECAST = "CREATE TABLE " + WeatherContract.ForecastEntry.TABLE_NAME_FORECAST +
