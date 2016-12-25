@@ -1,10 +1,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayoutWidgetBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     android:orientation="vertical"
-    android:id="@+id/linearLayoutWidgetBackground"
-    android:background="#000000">
+    android:clickable="true">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -96,6 +97,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
         android:orientation="horizontal">
 
         <TextView
@@ -111,22 +113,19 @@
             android:textSize="12sp" />
 
         <ProgressBar
+            android:id="@+id/progressBarWidget"
             style="?android:attr/progressBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/progressBar"
             android:layout_gravity="center"
-            android:layout_marginRight="11dp"
             android:visibility="gone" />
 
-        <ImageButton
+        <Button
             android:id="@+id/imageButtonUpdateWidget"
-            android:layout_gravity="center"
-            android:layout_marginRight="11dp"
-            android:background="#00000000"
-            app:srcCompat="@android:drawable/ic_popup_sync"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="20dp"
+            android:background="@drawable/refresh"
+            android:layout_width="20dp" />
+
     </LinearLayout>
 
 </LinearLayout>

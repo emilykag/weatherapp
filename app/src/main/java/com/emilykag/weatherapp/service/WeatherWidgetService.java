@@ -10,16 +10,20 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.emilykag.weatheapp.R;
+import com.emilykag.weatherapp.activities.ForecastActivity;
 import com.emilykag.weatherapp.models.WeatherValues;
 import com.emilykag.weatherapp.utils.WeatherImageTool;
 import com.emilykag.weatherapp.utils.databaseutils.DatabaseActions;
+import com.emilykag.weatherapp.utils.databaseutils.DatabaseUtils;
 import com.emilykag.weatherapp.widgets.WeatherWidget;
 
 public class WeatherWidgetService extends Service {
 
-    public static String UPDATE_WIDGET_ACTION = "YourAwesomeAction";
+    public static final String WIDGET_BUTTON = "com.emilykag.weatherapp.service.WeatherWidgetService.WIDGET_BUTTON";
+    public static final String WIDGET_ON_CLICK = "com.emilykag.weatherapp.service.WeatherWidgetService.WIDGET_ON_CLICK";
 
     private static IntentFilter intentFilter;
 
@@ -61,20 +65,19 @@ public class WeatherWidgetService extends Service {
     };
 
     private void updateWeather() {
-        DatabaseActions databaseActions = new DatabaseActions(this);
-        WeatherValues weatherValues = databaseActions.retrieveWeatherValues();
+        WeatherValues weatherValues = DatabaseUtils.retrieveWeatherValues(getApplicationContext());
         RemoteViews views = new RemoteViews(getPackageName(), R.layout.weather_widget);
         if (weatherValues != null) {
             views.setTextViewText(R.id.textViewLocation, weatherValues.getCity());
             views.setTextViewText(R.id.textViewNowTemp, weatherValues.getTemperature() + (char) 0x00B0);
             views.setTextViewText(R.id.textViewMinTemp, weatherValues.getListForecast().get(0).getLow() + (char) 0x00B0);
             views.setTextViewText(R.id.textViewMaxTemp, weatherValues.getListForecast().get(0).getHigh() + (char) 0x00B0);
-            views.setImageViewResource(R.id.imageButtonUpdateWidget, android.R.drawable.ic_popup_sync);
             views.setTextViewText(R.id.textViewLastUpdated, getString(R.string.last_updated, weatherValues.getLastUpdated()));
             WeatherImageTool weatherImageTool = new WeatherImageTool(this, views);
             weatherImageTool.setWeatherImage(weatherValues.getCode(), "widget");
             weatherImageTool.setWeatherImage(weatherValues.getCode(), "widgetBack");
-            //views.setOnClickPendingIntent(R.id.imageButtonUpdateWidget, getPendingIntent());
+            views.setOnClickPendingIntent(R.id.imageButtonUpdateWidget, getPendingIntent());
+            views.setOnClickPendingIntent(R.id.linearLayoutWidgetBackground, getOpenAppPendingIntent());
         }
         ComponentName widget = new ComponentName(this, WeatherWidget.class);
         AppWidgetManager manager = AppWidgetManager.getInstance(this);
@@ -83,7 +86,13 @@ public class WeatherWidgetService extends Service {
 
     private PendingIntent getPendingIntent() {
         Intent intent = new Intent(this, WeatherWidget.class);
-        intent.setAction(UPDATE_WIDGET_ACTION);
+        intent.setAction(WIDGET_BUTTON);
+        return PendingIntent.getBroadcast(this, 0, intent, 0);
+    }
+
+    private PendingIntent getOpenAppPendingIntent() {
+        Intent intent = new Intent(this, WeatherWidget.class);
+        intent.setAction(WIDGET_ON_CLICK);
         return PendingIntent.getBroadcast(this, 0, intent, 0);
     }
 }

@@ -1,5 +1,6 @@
 package com.emilykag.weatherapp.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
@@ -8,6 +9,8 @@ import android.view.View;
 
 import com.emilykag.weatheapp.R;
 import com.emilykag.weatherapp.fragments.MainForecastFragment;
+import com.emilykag.weatherapp.service.ForecastService;
+import com.emilykag.weatherapp.utils.Global;
 import com.emilykag.weatherapp.utils.ScheduleRefresh;
 
 public class SettingsActivity extends PreferenceActivity implements
@@ -33,7 +36,7 @@ public class SettingsActivity extends PreferenceActivity implements
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.pref_location_key))) {
-            MainForecastFragment.getInstance().updateWeather(1);
+            Global.updateFromSettings = true;
         } else if (key.equals(getString(R.string.pref_refresh_key))) {
             int interval = Integer.parseInt(sharedPreferences.getString(getString(R.string.pref_refresh_key),
                     getString(R.string.pref_refresh_default)));

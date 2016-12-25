@@ -51,6 +51,9 @@
         <receiver android:name="com.emilykag.weatherapp.widgets.WeatherWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.emilykag.weatherapp.service.WeatherWidgetService.WIDGET_BUTTON" />
+                <action android:name="com.emilykag.weatherapp.service.ForecastService.WIDGET_LOCATION_NOT_FOUND" />
+                <action android:name="com.emilykag.weatherapp.service.ForecastService.WIDGET_ERROR_UPDATE" />
             </intent-filter>
 
             <meta-data
@@ -65,7 +68,7 @@
         <service
             android:name="com.emilykag.weatherapp.service.WeatherWidgetService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false" />
     </application>
 
 </manifest>

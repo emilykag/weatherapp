@@ -66,9 +66,11 @@ public class ClockWidgetService extends Service {
         calendar.setTimeInMillis(System.currentTimeMillis());
 
         CharSequence time = DateFormat.format("HH:mm", calendar);
+        CharSequence date = DateFormat.format("EEE dd MMMM", calendar);
 
         RemoteViews views = new RemoteViews(getPackageName(), R.layout.weather_widget);
         views.setTextViewText(R.id.textViewClock, time);
+        views.setTextViewText(R.id.textViewDate, date);
 
         ComponentName widget = new ComponentName(this, WeatherWidget.class);
         AppWidgetManager manager = AppWidgetManager.getInstance(this);

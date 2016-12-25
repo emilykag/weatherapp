@@ -26,16 +26,16 @@ import com.emilykag.weatherapp.models.WeatherValues;
 import com.emilykag.weatherapp.service.ForecastService;
 import com.emilykag.weatherapp.service.WeatherWidgetService;
 import com.emilykag.weatherapp.utils.DateUtils;
+import com.emilykag.weatherapp.utils.Global;
 import com.emilykag.weatherapp.utils.JSONParser;
 import com.emilykag.weatherapp.utils.Tools;
 import com.emilykag.weatherapp.utils.WeatherImageTool;
 import com.emilykag.weatherapp.utils.databaseutils.DatabaseActions;
+import com.emilykag.weatherapp.utils.databaseutils.DatabaseUtils;
 
 import java.util.List;
 
 public class MainForecastFragment extends Fragment implements Callback {
-
-    private static MainForecastFragment instance;
 
     private TextView textViewLocation;
     private TextView textViewDate;
@@ -56,13 +56,7 @@ public class MainForecastFragment extends Fragment implements Callback {
 
     private OnFragmentInteractionListener mListener;
 
-    private DatabaseActions databaseActions;
-
     public MainForecastFragment() {
-    }
-
-    public static MainForecastFragment getInstance() {
-        return instance;
     }
 
     @Override
@@ -97,8 +91,6 @@ public class MainForecastFragment extends Fragment implements Callback {
                 }
             }
         });
-
-        instance = this;
 
         return view;
     }
@@ -138,24 +130,28 @@ public class MainForecastFragment extends Fragment implements Callback {
     }
 
     private void onLoad() {
-        databaseActions = new DatabaseActions(getContext());
-        WeatherValues weatherValues = databaseActions.retrieveWeatherValues();
-        if (weatherValues == null) {
-            if (Tools.isNetworkAvailable(getContext())) {
-                updateWeather(2);
+        if (!Global.updateFromSettings) {
+            WeatherValues weatherValues = DatabaseUtils.retrieveWeatherValues(getContext());
+            if (weatherValues == null) {
+                if (Tools.isNetworkAvailable(getContext())) {
+                    updateWeather(2);
+                } else {
+                    new AlertDialog.Builder(getContext())
+                            .setMessage(getString(R.string.no_internet_message))
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    getActivity().finish();
+                                }
+                            })
+                            .show();
+                }
             } else {
-                new AlertDialog.Builder(getContext())
-                        .setMessage(getString(R.string.no_internet_message))
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                getActivity().finish();
-                            }
-                        })
-                        .show();
+                setViews(weatherValues, 0);
             }
         } else {
-            setViews(weatherValues, 0);
+            updateWeather(1);
+            Global.updateFromSettings = false;
         }
     }
 
@@ -163,6 +159,7 @@ public class MainForecastFragment extends Fragment implements Callback {
         Intent intent = new Intent(getContext(), ForecastService.class);
         intent.putExtra("type", type);
         getActivity().startService(intent);
+        progressBarMainForecast.setVisibility(View.VISIBLE);
     }
 
     private BroadcastReceiver forecastReceiver = new BroadcastReceiver() {
@@ -178,6 +175,7 @@ public class MainForecastFragment extends Fragment implements Callback {
                     showFailure(response.getCode());
                 }
             }
+            progressBarMainForecast.setVisibility(View.GONE);
         }
     };
 
@@ -186,14 +184,14 @@ public class MainForecastFragment extends Fragment implements Callback {
             if (type == 0) {
                 setWeatherToViews(weatherValues);
             } else if (type == 1) { // update database
-                WeatherValues oldWeatherValues = databaseActions.retrieveWeatherValues();
-                databaseActions.updateWeatherValues(oldWeatherValues, weatherValues);
+                DatabaseUtils.updateWeatherValues(getContext(), weatherValues);
                 setWeatherToViews(weatherValues);
-            } else {
+                getActivity().startService(new Intent(getContext(), WeatherWidgetService.class));
+            } else if (type == 2) {
                 setWeatherToViews(weatherValues);
-                databaseActions.addWeatherValues(weatherValues);
+                DatabaseUtils.addWeatherValues(getContext(), weatherValues);
+                getActivity().startService(new Intent(getContext(), WeatherWidgetService.class));
             }
-            getActivity().startService(new Intent(getContext(), WeatherWidgetService.class));
         } else {
             linearLayoutMainWeather.setVisibility(View.GONE);
             textViewLocationNotFound.setVisibility(View.VISIBLE);
@@ -202,11 +200,7 @@ public class MainForecastFragment extends Fragment implements Callback {
     }
 
     public void showFailure(int statusCode) {
-        String message = "Error " + String.valueOf(statusCode);
-        if (!Tools.isNetworkAvailable(getContext())) {
-            message = getString(R.string.no_internet_message);
-        }
-        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+        Tools.showFailure(getContext(), statusCode);
     }
 
     private void setWeatherToViews(WeatherValues weatherValues) {

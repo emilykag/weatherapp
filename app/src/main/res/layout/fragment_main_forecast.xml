@@ -4,6 +4,37 @@
     android:layout_height="match_parent"
     tools:context="com.emilykag.weatherapp.fragments.MainForecastFragment">
 
+    <ProgressBar
+        android:id="@+id/progressBarMainForecast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textViewLocationNotFound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_margin="20dp"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="gone" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|bottom"
+        android:src="@drawable/yahoo_logo" />
+
+    <TextView
+        android:id="@+id/textViewLastUpdated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:text="@string/last_updated"
+        android:textColor="#ffffff" />
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayoutMainForecast"
         android:layout_width="match_parent"
@@ -272,36 +303,5 @@
         </ScrollView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
-
-    <ProgressBar
-        android:id="@+id/progressBarMainForecast"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/textViewLocationNotFound"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|center_horizontal"
-        android:layout_margin="20dp"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:visibility="gone" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start|bottom"
-        android:src="@drawable/yahoo_logo" />
-
-    <TextView
-        android:id="@+id/textViewLastUpdated"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:text="@string/last_updated"
-        android:textColor="#ffffff" />
 
 </FrameLayout>
