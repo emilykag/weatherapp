@@ -20,11 +20,11 @@ public class DatabaseActions {
 
     private Context context;
 
-    public DatabaseActions(Context context) {
+    DatabaseActions(Context context) {
         this.context = context;
     }
 
-    public WeatherValues retrieveWeatherValues() {
+    WeatherValues retrieveWeatherValues() {
         WeatherValues weatherValues = null;
         Cursor cursor = context.getContentResolver().query(
                 WeatherContract.WeatherEntry.CONTENT_URI,
@@ -87,7 +87,7 @@ public class DatabaseActions {
         return forecastList;
     }
 
-    public void addWeatherValues(WeatherValues weatherValues) {
+    void addWeatherValues(WeatherValues weatherValues) {
         ContentValues values = new ContentValues();
         values.put(WeatherContract.WeatherEntry.WV_CITY, weatherValues.getCity());
         values.put(WeatherContract.WeatherEntry.WV_WINDSPEED, weatherValues.getWindSpeed());
